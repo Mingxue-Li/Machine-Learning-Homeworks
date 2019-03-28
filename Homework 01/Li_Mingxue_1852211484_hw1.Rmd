@@ -1,0 +1,305 @@
+---
+title: "Homework 01"
+author: "Mingxue (Jacqueline) Li"
+date: 2019-02
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Exercises from Section 3.7 of ISLR
+## Exercise 1
+Describe the null hypotheses to which the p-values given in Table 3.4 correspond. Explain what conclusions you can draw based on these p-values. Your explanation should be phrased in terms of *sales*, *TV*, *radio*, and *newspaper*, rather than in terms of the coefficients of the linear model.
+
+**Answers**: Null hypotheses is that TV, radio and newspaper all have no impact on sales. Based on the p-values, we can conclude that there's no statistically significant relationship between newspaper and sales (since we cannot reject the null hypotheses), which means changes occurred in newspaper woould not significantly influence the sales.But the TV and radio have significant influence on sales. 
+
+## Exercise 3
+Suppose we have a dataset with five predictors, $X_1$ = GPA, $X_2$ = IQ, $X_3$ = Gender(1 for Female and 0 for Male), $X_4$ = Interaction between GPA and IQ, and $X_5$ = Interaction between GPA and Gender. The response is starting salary after graduation (in thousands of dollars). Suppose we use least squares to fit the model, and get $\hat{\beta_0}$ =50, $\hat{\beta_1}$ = 20, $\hat{\beta_2}$ = 0.07, $\hat{\beta_3}$ = 35, $\hat{\beta_4}$ = 0.01, $\hat{\beta_5}$ = -10.
+
+(a) Which answer is correct, and why?
+
+(b) Predict the salary of a female with IQ of 110 and a GPA of 4.0.
+
+(c) True or False: Since the coefficient for the GPA/IQ interaction term is very small, there is very little evidence of an interaction effect. Justify your answer.
+
+**Answers:**
+
+(a) Answer is the third one. With a fixed IQ and GPA, we consider the changes of resulting salary by only looking at the $\hat{\beta_3}$$X_3$ + $\hat{\beta_5}$$X_5$ = 35$X_3$-10$X_5$. For male, this function equals 0. For female, this fuction equals 35 - 10$X_1$. So it's now clear to see that when GPA is lower than 3.5, female would earn more than male. In other words, males earn more on average than females provided that GPA is high enough.
+
+(b) A female with IQ of 100 and GPA of 4.0 will have salary of 137.1 thousands of dollars.
+
+(c) False. First of all, we need to look at the p-value to decide whether the interaction relationship is statistically significant. Secondly, even if it is significant, with a fixed GPA, a great change in IQ will significantly influence the final salary.
+
+## Exercise 4
+I collect a set of data (n = 100 observations) containing a single predictor and a quantitative response. I then fit a linear regression model to the data, as well as a separate cubic regression, i.e. $Y$ = ${\beta_0}$ + ${\beta_1}X$ + ${\beta_2}X^2$ + ${\beta_3}X^3$ + $\epsilon$.
+
+(a) Suppose that the true relationship between $X$ and $Y$ is linear, i.e. $Y$ = ${\beta_0}$ + ${\beta_1}X$ + $\epsilon$. Consider the training residual sum of squares (RSS) for the linear regression, and also the training RSS for the cubic regression. Would we expect one to be lower than the other, would we expect them to be the same, or is there not enough information to tell? Justify your answer.
+
+(b) Answer (a) using test rather than training RSS.
+
+(c) Suppose that the true relationship between $X$ and $Y$ is not linear, but we don???t know how far it is from linear. Consider the training RSS for the linear regression, and also the training RSS for the cubic regression. Would we expect one to be lower than the other, would we expect them to be the same, or is there not enough information to tell? Justify your answer.
+ 
+(d) Answer (c) using test rather than training RSS.
+
+**Answers:**
+
+(a) The training RSS for cubic regression would be smaller than the RSS for the linear regression. Because by overfitting the model, we can get better match with the observations.
+
+(b) The test RSS for cubic regression would be greater than the test RSS for the linear regression. Because the overfitting from training set would have more error than the simple linear regression.
+
+(c) The training RSS for cubic regression would be smaller than the RSS for the linear regression. Because by overfitting the model, we can always get better match with the observations and thus reduce the training RSS.
+
+(d) There is not enough information to tell which test RSS would be greater because we don't know how far it is from linear. If it is closer to linear, the test RSS for cubic regression will be greater. On the other hand, if it is closer to polynomial regression, the test RSS for cubic regression will be smaller then the test RSS for the linear regression. 
+
+## Exercise 5
+Consider the fitted values that result from performing linear regres- sion without an intercept. In this setting, the ith fitted value takes the form 
+\begin{center}
+$\hat{y_i} = {x_i}\hat{\beta}$
+\end{center}
+where
+\begin{center}
+$$\hat{\beta} = \left(\sum_{i=1}^{n} x_iy_i\right) / \left(\sum_{i^\prime=1}^{n} x_{i^\prime}^2\right)$$ 
+\end{center}
+Show that we can write
+\begin{center}
+$$\hat{y_i} = \sum_{i^\prime=1}^{n} a_{i^\prime}y_{i^\prime}$$
+\end{center}
+What is $a_{i'}$?
+
+*Note: We interpret this result by saying that the fitted values from linear regression are* linear combinations *of the response values.*
+
+**Answers:**
+
+From the equations provided, we can get:
+$$ \hat{y}_{i} = x_{i} \times \frac{\sum_{i'=1}^{n}\left ( x_{i'} y_{i'} \right )}{\sum_{j=1}^{n} x_{j}^{2}} $$
+
+To get closer to the formation of the answer, we rewrite the equation like this:
+$$ \hat{y}_{i} = \sum_{i'=1}^{n} \frac{\left ( x_{i'} y_{i'} \right ) \times x_{i}}{\sum_{j=1}^{n} x_{j}^{2}} $$
+
+$$ \hat{y}_{i} = \sum_{i'=1}^{n} \left ( \frac{ x_{i} x_{i'} } { \sum_{j=1}^{n} x_{j}^{2} } \times y_{i'} \right ) $$
+
+So we can see that $a_{i'}$ can be expressed as follows:
+$$ a_{i'} = \frac{ x_{i} x_{i'} } { \sum_{j=1}^{n} x_{j}^{2} } $$
+
+## Exercise 6
+Using (3.4), argue that in the case of simple linear regression, the least squares line always passes through the point($\bar x$, $\bar y$).
+
+**Answers:**
+
+The least squares line:
+\begin{equation}
+    \hat y = \hat\beta_0 + \hat\beta_1 x \tag{1}
+    \end{equation}
+from (3.4): 
+\begin{equation}
+    \hat\beta_0 = \bar y - \hat\beta_1 \bar x \tag{2}
+    \end{equation}
+If we replace the $\hat\beta_0$ in equation 1 using equation 2, we can get:
+\begin{equation}
+    \hat y = \bar y - \hat \beta_1\bar x + \hat\beta_1 x\tag{3}
+    \end{equation}
+Then we input the point($\bar x$, $\bar y$) to equation 3:
+\begin{center}
+$\bar y = \bar y - \hat \beta_1\bar x + \hat\beta_1 \bar x$
+\end{center}
+\begin{center}
+0 = 0
+\end{center}
+
+So that the least squares line always passes through the point($\bar x$, $\bar y$).
+
+## Exercise 7
+It is claimed in the text that in the case of simple linear regression of $Y$ onto $X$, the $R^2$ statistic (3.17) is equal to the square of the correlation between $X$ and $Y$ (3.18). Prove that this is the case. For simplicity, you may assume that $\bar x = \bar y = 0$.
+
+**Answers:**
+
+First of all, we assume $\bar x=\bar y=0$.
+
+From 3.17, we can get:
+$$R^2 = \frac{TSS - RSS}{TSS} = 1- \frac{RSS}{TSS} $$
+
+From 3.18, we can get:
+$$ r = \frac{\sum_{i=1}^{n} x_{i} y_{i}}{\sqrt{\sum_{i=1}^{n}x_{i}^{2} \times \sum_{i=1}^{n}y_{i}^{2}} } $$
+
+So the square of the correlation between $X$ and $Y$ is:
+$$ r^2 = \frac{ \left( \sum_{i=1}^{n} x_{i} y_{i}\right)^2 }{\sum_{i=1}^{n}x_{i}^{2} \times \sum_{i=1}^{n}y_{i}^{2} } $$
+
+Also, we know that:
+$$ TSS = \sum_{i=1}^n \left ( y_i-\bar y\right)^2 = \sum_{i=1}^n y_i^2 $$
+
+$$ RSS = \sum_{i=1}^{n} \left ( y_{i}-\hat{y_{i}}\right )^{2} = \sum_{i=1}^{n} \left ( y_{i}-\left ( \hat{\beta_{0}} + \hat{\beta_{1}}x_{i} \right )\right )^{2} = \sum_{i=1}^{n} \left ( y_{i}-\left ( \frac{\sum_{i=1}^{n} x_{i}y_{i} }{\sum_{i=1}^{n} x_{i}^{2}} \right ) x_{i} \right )^{2} $$
+
+So we can know:
+$$ \frac{TSS - RSS}{TSS} = r^2 $$
+
+$$ R^{2} = \left[ Cor \left( X, Y\right)\right]^{2} $$
+
+## Exercise 8
+This question involves the use of simple linear regression on the *Auto* dataset.
+
+##### (a) Use the *lm()* function to perform a simple linear regression with *mpg* as the response and *horsepower* as the predictor. Use the *summary()* function to print the results. Comment on the output.
+```{r message = F}
+library(MASS)
+library(ISLR)
+attach(Auto)
+names(Auto)
+lm1.fit = lm(mpg ~ horsepower)
+summary(lm1.fit)
+```
+**Conclusion:** We can see from the summary table that there is a statistically significant relationship between `horsepower` and `mpg` and that the relationship is pretty strong due to the very small p-value. And the relationship is negative which means that when other conditions stay the same, if `horsepower` increases, `mpg` would be very likely to decrease. 
+
+```{r}
+predict(lm1.fit, data.frame(horsepower = 98), interval = 'confidence')
+```
+```{r}
+predict(lm1.fit, data.frame(horsepower = 98), interval = 'prediction')
+```
+**Conclusion:** The predicted `mpg` associated with a `horsepower` of 98 is about 24.467. The associated 95% confidence interval is [23.973, 24.961] and prediction interval is [14.809, 34.125].
+
+##### (b) Plot the response and the predictor. Use the *abline()* function to display the least squares regression line.
+```{r}
+plot(horsepower, mpg)
+abline(lm1.fit, col = 'red')
+```
+
+##### (c) Use the *plot()* function to produce diagnostic plots of the least squares regression fit. Comment on any problems you see with the fit.
+```{r}
+par(mfrow=c(2,2))
+plot(lm1.fit)
+```
+**Conclusion:** From the diagnostic plots, we can see the relationship between `horsepower` and `mpg` should not be linear, for the points in the residual plot are not randomly dispersed around the horizontal axis 0. Also, we find that observation 116 and 94 are high leverage points and that observation 321, 328 and 331 are outliers.
+
+## Exercise 9
+This question involves the use of multiple linear regression on the *Auto* dataset.
+
+##### (a) Produce a scatterplot matrix which includes all of the variables in the data set.
+```{r message = F}
+library(ISLR)
+data(Auto)
+pairs(Auto)
+```
+
+##### (b) Compute the matrix of correlations between the variables using the function *cor()*. You will need to exclude the name variable, which is qualitative.
+```{r}
+x = Auto[1:8]
+y = Auto[1:8]
+cor(x, y)
+```
+
+##### (c) Use the *lm()* function to perform a multiple linear regression with *mpg* as the response and all other variables except *name* as the predictors. Use the *summary()* function to print the results.
+```{r}
+lm2.fit = lm(mpg ~.-name, data=Auto)
+summary(lm2.fit)
+```
+**Conclusion:** From the summary table, we can definitely conclude that there is a relationship between the predictors and the response. Among the predictors, `displacement`, `weight`, `year` and `origin` have statistically significant relationships with mpg. The coefficient for `year` variable is positive which suggests that cars in the later years tend to have higher mpg.
+
+##### (d) Use the *plot()* function to produce diagnostic plots of the linear regression fit. Comment on any problems you see with the fit. Do the residual plots suggest any unusually large outliers? Does the leverage plot identify any observations with unusually high leverage?
+```{r}
+par(mfrow=c(2,2))
+plot(lm2.fit)
+```
+**Conclusion:** From the Residuals vs Fitted plot, we can see the relationship between all variables except `name` and `mpg` should not be linear, for the points in the residual plot are not randomly dispersed around the horizontal axis 0. Also, based on the Residuals vs Leverage graph, we can find out that observation 327 and 394 are outliers and observation 14 are high leverage points.
+
+##### (e) Use the * and : symbols to fit linear regression models with interaction effects. Do any interactions appear to be statistically significant?
+```{r}
+summary(lm(mpg ~ weight*horsepower, data = Auto))
+summary(lm(mpg ~ weight+horsepower+weight:horsepower, data = Auto))
+```
+**Conclusion:** These two queries mean the same thing, just different expressions. From the result we can see that the interaction term between `weight` and `horsepower` is statistically significant. This means that the relationship between `weight` and `mpg` is affected by the `horsepower` of that car. Also, how `horsepower` would influence `mpg` is affected by the car's `weight`.
+
+##### (f) Try a few different transformations of the variables. Comment on your findings.
+```{r}
+summary(lm(mpg~ log(horsepower), data=Auto))
+summary(lm(mpg~ horsepower+I(horsepower^(1/2)), data=Auto))
+summary(lm(mpg~ horsepower+I(horsepower^2), data=Auto))
+summary(lm(mpg~ poly(horsepower, 5), data=Auto))
+```
+**Conclusion:** We can make the model fit better by overfitting it, for we can see that the $R^2$ and RSE in the last model are both the smallest among all of the four models. But by doing so, we are sacrificing on the dimensionality and the level of significance among our predictors.
+
+## Exercise 10
+This question should be answered using the Carseats dataset.
+
+##### (a) Fit a multiple regression model to predict *Sales* using *Price*, *Urban*, and *US*.
+```{r message = F}
+library(ISLR)
+attach(Carseats)
+names(Carseats)
+help('Carseats')
+lm3.fit = lm(Sales ~ Price + Urban + US)
+summary(lm3.fit)
+```
+
+##### (b) Provide an interpretation of each coefficient in the model. Be careful - some of the variable in the model are qualitative!
+
+* The relationships between `Price` and `Sales`, `US` and `Sales` are statistically significant. For every dollar increase in `Price`, `Sales` would decrease for 54.459 dollars. If a store is in the `US`, `Sales` would be 1200.573 dollars higher.
+* Even thought the relationship between `Urban` and `Sales` is not statistically significant, we can still conclude from the coefficient that if a store is in an `Urban` location, there is a possibility that `Sales` would be 21.916 dollars lower than if it's in a rural location.
+
+##### (c) Write out the model in the equation form, being careful to handle the qualitative variables properly.
+
+Let: 
+\begin{equation}
+  X_1 = Price
+\end{equation}
+
+\begin{equation}
+  X_2 =
+  \begin{cases}
+    1 & \text{if } Urban,
+    \\
+    0 & \text{if } Rural.
+  \end{cases}
+\end{equation}
+
+\begin{equation}
+  X_3 =
+  \begin{cases}
+    1 & \text{if } US,
+    \\
+    0 & \text{if } Non-US.
+  \end{cases}
+\end{equation}
+
+So the model written in equation form would be:
+\begin{equation}
+  Sales = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + \epsilon = 
+  \begin{cases}
+    13.043 -0.054X_1 - 0.022X_2 + 1.201X_3 + \epsilon & \text{if } Urban, US,
+    \\
+    13.043 -0.054X_1 - 0.022X_2 + \epsilon & \text{if } Urban, Non-US,
+    \\
+    13.043 -0.054X_1 + 1.201X_3 + \epsilon & \text{if } Rural, US,
+    \\
+    13.043 -0.054X_1 + \epsilon & \text{if } Rural, Non-US.
+  \end{cases}
+\end{equation}
+
+##### (d) For which of the predictors can you reject the null hypothesis?
+
+**Answer:** `Price` and `USYes`.
+
+##### (e) On the basis of your response to the previous questions, fit a smaller model that only uses the predictors for which there is evidence of association with the outcome.
+```{r}
+lm4.fit = lm(Sales ~ Price + US, data = Carseats)
+summary(lm4.fit)
+```
+
+##### (f) How well do the models in (a) and (e) fit the data?
+
+**Conclusion:** They both have quite appropriate $R^2$ and it means these two models are reasonablly usable. Comparing the two models' RSE and $R^2$, we can see that they have the same $R^2$ but the second model has a slightly lower RSE with one less variable, concluding that the second model is slightly better. 
+
+##### (g) Using the model from (e), obtain 95% confidence intervals for the coefficient(s).
+```{r}
+confint(lm4.fit)
+```
+
+##### (h) Is there evidence of outliers or high leverage observations in the model from (e)?
+```{r}
+par(mfrow=c(2,2))
+plot(lm4.fit)
+```
+```{r}
+plot(hatvalues(lm4.fit))
+which.max(hatvalues(lm4.fit))
+```
+**Conclusion:** From this diagnostic plots, we can see that observation 51, 69 and 377 are big outliers. Furthermore, based on the leverage statistics we can see there are some leverage points in model(e), among which observation 43 is the biggest one.

@@ -1,0 +1,210 @@
+---
+title: "Homework 02"
+author: "Mingxue (Jacqueline) Li"
+date: 2019-02
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Exercises from Section 4.7 of ISLR
+## Exercise 7
+Suppose that we wish to predict whether a given stock will issue a dividend this year ('Yes' or 'No') based on $X$, last year's percent profit. We examine a large number of companies and discover that the mean value of $X$ for companies that issued a dividend was $\bar X$ = 10, while the mean for those that didn't was $\bar X$ = 0. In addition, the variance of $X$ for these two sets of companies was ${\hat \sigma}^2$ = 36. Finally, 80% of companies issued dividends. Assuming that $X$ follows a normal distribution, predict the probability that a company will issue a dividend this year given that its percentage profit was $X$ = 4 last year.
+
+Hint: Recall that the density function for a normal random variable is $f(x) = \frac {1}{\sqrt {2\pi}\sigma^2} e^{-(x-\mu)^2 / 2\sigma^2}$. You will need to use Bayes' theorem.
+
+**Answers:**
+
+According to Bayes' theorem, $$Pr(Y = k| X = x) = \frac {\pi_k f_k(x)}{\sum_{l=1}^K \pi_lf_l(x)}$$along with the normal density formula, $$f_k(x) = \frac {1}{\sqrt {2\pi}\sigma_k^2} e^{-(x-\mu_k)^2 / 2\sigma_k^2}$$ we can compute:
+
+$$p_{yes}(x) = \frac {\pi_{yes} \frac {1}{\sqrt {2\pi}\sigma^2} e^{-(x-\mu_{yes})^2 / 2\sigma^2}}{\sum_{l=1}^K \pi_l \frac {1}{\sqrt{2\pi}\sigma^2}e^{-(x-\mu_l)^2/2\sigma^2}} = \frac {\pi_{yes}e^{-(x-\mu_{yes})^2 / 2\sigma^2}}{\pi_{yes}e^{-(x-\mu_{yes})^2 / 2\sigma^2} + \pi_{no}e^{-(x-\mu_{no})^2/2\sigma^2}}$$
+
+$$p_{yes}(4) = \frac{0.8e^{-(4-10)^2/2*36}}{0.8e^{-(4-10)^2/2*36} + 0.2e^{-(4-0)^2/2*36}} \approx  75.2\%$$
+
+## Exercise 10
+This question should be answered using the `Weekly` data set, which is part of the `ISLR` package. This data is similar in nature to the `Smarket` data from this chapter's lab, except that it contains 1,089 weekly returns for 21 years, from the beginning of 1990 to the end of 2010.
+
+**Solutions:**
+
+**(a) Produce some numerical and graphical summaries of the `Weekly` data. Do there appear to be any patterns?**
+```{r message=FALSE}
+library(ISLR)
+dim(Weekly)
+summary(Weekly)
+```
+```{r}
+data = Weekly
+cor(data[,-9])
+```
+```{r}
+attach(Weekly)
+plot(Year, Volume)
+```
+
+**Conclusions:** `Year` and `Volume` are highly positively correlated.
+
+**(b) Use the full data set to perform a logistic regression with `Direction` as the response and the five lag variables plus `Volume` as predictors. Use the summary function to print the results. Do any of the predictors appear to be statistically significant? If so, which ones?**
+```{r}
+glm.fit1 = glm(Direction~Lag1+Lag2+Lag3+Lag4+Lag5+Volume,data = Weekly, family = binomial)
+summary(glm.fit1)
+```
+**Conclusions:** `Lag2` is proven to be statistically significant.
+
+**(c) Compute the confusion matrix and overall fraction of correct predictions. Explain what the confusion matrix is telling you about the types of mistakes made by logistic regression.**
+```{r}
+glm.probs1 = predict(glm.fit1, type = "response")
+glm.pred1 = rep("Down", 1089)
+glm.pred1[glm.probs1 > 0.5] = "Up"
+table(glm.pred1, Direction)
+mean(glm.pred1==Direction)
+```
+**Conclusions:** This logistic regression correctly predicted the movement of the returns 56.11% of the time. The false positive rate (Type I Error) of this regression is 430/(430+54) = 88.84% and the true positive rate (Type II Error) of this regression is 557/(557+48) = 92.07%, meaning that the logstic regression is right about returns going up 92.07% of the time and is right about the returns going down for only 54/(430+54)=11.16% of the time.
+
+**(d) Now fit the logistic regression model using a training data period from 1990 to 2008, with `Lag2` as the only predictor. Compute the confusion matrix and the overall fraction of correct predictions for the held out data (that is, the data from 2009 and 2010).**
+```{r}
+train = (Year < 2009)
+test =  Weekly[!train, ]
+glm.fit2 = glm(Direction ~ Lag2, data = Weekly, family = binomial, subset = train)
+glm.probs2 = predict(glm.fit2, test, type = 'response')
+glm.pred2 = rep('Down', dim(test)[1])
+glm.pred2[glm.probs2 > 0.5] = 'Up'
+table(glm.pred2, Direction[!train])
+mean(glm.pred2==Direction[!train])
+```
+
+**(e) Repeat (d) using LDA.**
+```{r message=FALSE}
+library(MASS)
+lda.fit1 = lda(Direction ~ Lag2, data = Weekly, subset = train)
+lda.pred1 = predict(lda.fit1, test)
+names(lda.pred1)
+table(lda.pred1$class, Direction[!train])
+mean(lda.pred1$class==Direction[!train])
+```
+
+**(f) Repeat (d) using QDA.**
+```{r}
+qda.fit1 = qda(Direction ~ Lag2, data = Weekly, subset = train)
+qda.pred1 = predict(qda.fit1, test)
+names(qda.pred1)
+table(qda.pred1$class, Direction[!train])
+mean(qda.pred1$class==Direction[!train])
+```
+
+**(g) Repeat (d) using KNN with $K = 1$.**
+```{r message=FALSE}
+library(class)
+train.X = as.matrix(Lag2[train])
+test.X = as.matrix(Lag2[!train])
+train.Direction = Direction[train]
+set.seed(1)
+knn.pred = knn(train.X, test.X, train.Direction, k = 1)
+table(knn.pred, Direction[!train])
+mean(knn.pred==Direction[!train])
+```
+
+**(h) Which of these methods appears to provide the best results on this data?**
+
+LDA and Logistic Regression have the best results based on the proportion of observations that are correctly predicted.
+
+## Exercise 11
+In this problem, you will develop a model to predict whether a given car gets high or low gas mileage based on the `Auto` data set.
+
+**Solutions:**
+
+**(a) Create a binary variable, `mpg01`, that contains a 1 if `mpg` contains a value above its median, and a 0 if `mpg` contains a value below its median. You can compute the median using the `median()` function. Note you may find it helpful to use the `data.frame()` function to create a single data set containing both `mpg01` and the other `Auto` variables.**
+```{r}
+library(ISLR)
+mpg01 = ifelse(Auto$mpg > median(Auto$mpg), 1, 0)
+df = data.frame(Auto, mpg01)
+```
+
+**(b) Explore the data graphically in order to investigate the association between `mpg01` and the other features. Which of the other features seem most likely to be useful in predicting `mpg01`? Scatterplots and boxplots may be useful tools to answer this question. Describe your findings.**
+```{r}
+pairs(df)
+```
+```{r}
+cor(df[,-9])
+```
+**Conclusions:** `mpg01` is highly correlated with `cylinders`, `displacement`, `horsepower` and `weight`.
+
+**(c) Split the data into a training set and a test set.**
+```{r}
+train = df[1:200,]
+test = df[201:392,]
+```
+
+**(d) Perform LDA on the training data in order to predict `mpg01` using the variables that seemed most associated with `mpg01` in (b). What is the test error of the model obtained?**
+```{r}
+lda.fit = lda(mpg01 ~ cylinders+displacement+horsepower+weight, data = train)
+lda.pred = predict(lda.fit, test)
+names(lda.pred)
+table(lda.pred$class, test$mpg01)
+mean(lda.pred$class!=test$mpg01)
+```
+**Conclusions:** The test error of the model obtained is about 10.42%.
+
+**(e) Perform QDA on the training data in order to predict `mpg01` using the variables that seemed most associated with `mpg01` in (b). What is the test error of the model obtained?**
+```{r}
+qda.fit = qda(mpg01 ~ cylinders+displacement+horsepower+weight, data = train)
+qda.pred = predict(qda.fit, test)
+names(qda.pred)
+table(qda.pred$class, test$mpg01)
+mean(qda.pred$class!=test$mpg01)
+```
+**Conclusions:** The test error of the model obtained is about 13.54%.
+
+**(f) Perform logistic regression on the training data in order to predict `mpg01` using the variables that seemed most associated with `mpg01` in (b). What is the test error of the model obtained?**
+```{r}
+glm.fit = glm(mpg01 ~ cylinders+displacement+horsepower+weight, data=train, family=binomial)
+glm.probs = predict(glm.fit, test, type="response")
+glm.pred = ifelse(glm.probs > 0.5, 1, 0)
+table(glm.pred, test$mpg01)
+mean(glm.pred!=test$mpg01)
+```
+**Conclusions:** The test error of the model obtained is about 20.31%.
+
+**(g)Perform KNN on the training data, with several values of $K$, in order to predict `mpg01`. Use only the variables that seemed most associated with `mpg01` in (b). What test errors do you obtain? Which value of $K$ seems to perform the best on this data set?**
+```{r}
+set.seed(1)
+train.X = cbind(train$cylinders, train$weight, train$displacement, train$horsepower)
+test.X = cbind(test$cylinders, test$weight, test$displacement, test$horsepower)
+knn.pred = knn(train.X, test.X, train$mpg01, k=1)
+table(knn.pred, test$mpg01)
+mean(knn.pred != test$mpg01)
+```
+```{r}
+set.seed(1)
+knn.pred = knn(train.X, test.X, train$mpg01, k=5)
+table(knn.pred, test$mpg01)
+mean(knn.pred != test$mpg01)
+```
+```{r}
+set.seed(1)
+knn.pred = knn(train.X, test.X, train$mpg01, k=10)
+table(knn.pred, test$mpg01)
+mean(knn.pred != test$mpg01)
+```
+```{r}
+set.seed(1)
+knn.pred = knn(train.X, test.X, train$mpg01, k=20)
+table(knn.pred, test$mpg01)
+mean(knn.pred != test$mpg01)
+```
+```{r}
+set.seed(1)
+knn.pred = knn(train.X, test.X, train$mpg01, k=50)
+table(knn.pred, test$mpg01)
+mean(knn.pred != test$mpg01)
+```
+```{r}
+set.seed(1)
+knn.pred = knn(train.X, test.X, train$mpg01, k=100)
+table(knn.pred, test$mpg01)
+mean(knn.pred != test$mpg01)
+```
+**Conclusions:** $K = 5$ and$K = 100$ seem to perform the best on this data set.
+
+
+
