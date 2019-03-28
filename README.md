@@ -1,2 +1,6 @@
 # Machine-Learning-Homeworks
-This is the homework assignments of DSO 570 The Analytics Edge: Data, Models and Effective Decisions at University of Southern California. Textbook is "Python for Everybody" by Charles R. Severance and "Data, Model, and Decisions: The Fundamentals of Management Science." by Dimitris Bertsimas and Robert M. Freund, Dynamic Ideas, 2004. Content covers data manipulation in Python, statistics and optimization process.
+This is the homework assignments of DSO 530 Applied Modern Statistical Learning Methods at University of Southern California. 
+
+Textbook is "An Introduction to Statistical Learning with Applications in R" (ISLR) by Professors James, Witten, Hastie, and Tibshirani 
+
+Content covers Regression, Classification, Feature Engineering, etc.
